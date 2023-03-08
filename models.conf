@@ -47,7 +47,7 @@ class Aluno(models.Model):
     profissao_mae = models.CharField(max_length=100, blank=True, null=True, default='')
 
     senha = models.CharField(max_length=100, blank=True, null=True, default='')
-    foto = models.ImageField(upload_to='images', blank=True, null=True, )
+    foto = models.ImageField(upload_to='images', blank=True, null=True,)
 
     def __str__(self):
         return f'{self.id}: {self.nome} {self.last_name}'.upper()
@@ -59,8 +59,14 @@ class Funcionario(models.Model):
 
     nome = models.CharField(max_length=100, blank=True, null=True, default='')
     status = models.CharField(max_length=100, blank=True, null=True, default='')
-    funcao = models.IntegerField(blank=True, null=True, default='')  # [1=gerente, 2=recep, 3=professor]
+    funcao_choices = (
+        ('gerente', 'gerente'),
+        ('recepção', 'recepção'),
+        ('professor', 'professor'),
+    )
+    funcao = models.CharField(max_length=30 , blank=True, null=True, default='', choices=funcao_choices)  # [1=gerente, 2=recep, 3=professor]
     senha = models.CharField(max_length=100, blank=True, null=True, default='')
+    # senha = models.CharField(max_length=100, blank=True, null=True, default='')
     telefone1 = models.CharField(max_length=20, blank=True, null=True, default='')
     telefone2 = models.CharField(max_length=20, blank=True, null=True, default='')
     dat_nasc = models.DateTimeField( blank=True, null=True, default='')
@@ -83,13 +89,21 @@ class Funcionario(models.Model):
 
 class Horario(models.Model):
     id = models.AutoField(primary_key=True,)
-
-    dia_semana = models.CharField(max_length=100, blank=True, null=True, default='')
-    hora_inicio = models.IntegerField(blank=True, null=True, default='')
-    min_inicio = models.IntegerField(blank=True, null=True, default='')
-    hora_fim = models.IntegerField(blank=True, null=True, default='')
-    min_fim = models.IntegerField(blank=True, null=True, default='')
-    duracao_min = models.IntegerField(blank=True, null=True, default='')
+    dia_semana_choice = (
+        ('segunda-feira','segunda-feira'),
+        ('terça-feira','terça-feira'),
+        ('quarta-feira','quartada-feira'),
+        ('quinta-feira','quintaa-feira'),
+        ('sexta-feira','sextaa-feira'),
+        ('sábado-feira','sábadoda-feira'),
+        ('domingo-feira','domingoa-feira'),
+    )
+    dia_semana = models.CharField(max_length=30, blank=True, null=True, default='', choices=dia_semana_choice)
+    hora_inicio = models.CharField(max_length=2, blank=True, null=True, default='',)
+    min_inicio = models.CharField(max_length=2, blank=True, null=True, default='')
+    hora_fim = models.CharField(max_length=2, blank=True, null=True, default='')
+    min_fim = models.CharField(max_length=2, blank=True, null=True, default='')
+    duracao_min = models.CharField(max_length=2, blank=True, null=True, default='')
 
     def __str__(self):
         return f'{self.dia_semana} - {self.hora_inicio}:{self.min_inicio}/' \
