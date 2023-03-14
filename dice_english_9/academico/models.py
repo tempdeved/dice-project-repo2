@@ -7,9 +7,30 @@ class Aluno(models.Model):
     nome = models.CharField(max_length=100, blank=True, null=True, default='')
     sobrenome = models.CharField(max_length=100, blank=True, null=True, default='')
     last_name = models.CharField(max_length=100, blank=True, null=True, default='')
-    status = models.CharField(max_length=100, blank=True, null=True, default='')
+    status_choice = (
+        ('ativo','ativo'),
+        ('encerrado','encerrado'),
+        ('trancado','trancado'),
+        ('jubilado','jubilado'),
+    )
+    status = models.CharField(max_length=100, blank=True, null=True, default='', choices=status_choice)
+
     dat_nasc = models.DateTimeField( blank=True, null=True, default='')
-    mes_nascimento = models.IntegerField( blank=True, null=True, default='')
+    mes_nasc_choice = (
+        ('01','01'),
+        ('02','02'),
+        ('03','03'),
+        ('04','04'),
+        ('05','05'),
+        ('06','06'),
+        ('07','07'),
+        ('08','08'),
+        ('09','09'),
+        ('10','10'),
+        ('11','11'),
+        ('12','12'),
+    )
+    mes_nascimento = models.IntegerField( blank=True, null=True, default='', choices=mes_nasc_choice )
     cidade_nascimento = models.CharField(max_length=100, blank=True, null=True, default='')
     endereco = models.CharField(max_length=200, blank=True, null=True, default='')
     numero = models.IntegerField( blank=True, null=True, default='')
@@ -23,7 +44,11 @@ class Aluno(models.Model):
     inicio = models.DateTimeField( blank=True, null=True, default='')
     n_irmaos = models.IntegerField( blank=True, null=True, default='')
     retorno = models.DateTimeField( blank=True, null=True, default='')
-    sexo = models.CharField(max_length=100, blank=True, null=True, default='')
+    sexo_choice = (
+        ('M','M'),
+        ('F','F'),
+    )
+    sexo = models.CharField(max_length=100, blank=True, null=True, default='', choices=sexo_choice)
     responsavel_financeiro = models.CharField(max_length=100, blank=True, null=True, default='')
     responsavel_p_filhos = models.CharField(max_length=100, blank=True, null=True, default='')
     bairro_de_ida = models.CharField(max_length=100, blank=True, null=True, default='')
@@ -138,8 +163,8 @@ class HistoricoAluno(models.Model):
     id = models.AutoField(primary_key=True,)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    aluno = models.ForeignKey(Aluno, null=True, on_delete=models.RESTRICT)  # FK aluno
     turma = models.ForeignKey(Turma, null=True, on_delete=models.RESTRICT)  # FK turma
+    aluno = models.ForeignKey(Aluno, null=True, on_delete=models.RESTRICT)  # FK aluno
     # id_aluno = models.IntegerField(blank=True, null=True, default='')
     # id_turma = models.IntegerField(blank=True, null=True, default='')
     n_aulas = models.IntegerField(blank=True, null=True, default='')
@@ -165,3 +190,5 @@ class HistoricoAluno(models.Model):
     # def get_aluno(self):
     #     aluno = Aluno.objects.get(id=self.id)
     #     return aluno
+    def __str__(self):
+        return f'{self.turma}: {self.aluno}'

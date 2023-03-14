@@ -8,7 +8,12 @@ from django.http import HttpResponse
 #     return response
 def home(request):
 
-    result = {'hello': 'ola mundo'}
+    import dash_html_components as dcc
+
+    result = {
+        'hello': 'ola mundo porra',
+        'div_teste': dcc.Div('teste-div'),
+    }
 
     response = render(
         request=request,

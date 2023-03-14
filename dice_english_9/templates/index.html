@@ -2,13 +2,21 @@
 {% extends 'base.html' %}
 {% block main %}
 
-<h1>{{ hello }}</h1>
-ola, mundo
+<a href="{% url 'home' %}">
+    Home
+</a>.
+
+<h4>{{ hello }}</h4>
+
+<h4>{{ div_teste }}</h4>
+
 
 
 
 <button class="btn btn-info">
     teste
 </button>
+
+{% include 'footer.html' with heello_f=hello  %}
 
 {% endblock %}
