@@ -20,9 +20,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.home),
-    path('aluno', views.aluno),
-    path('aluno/<int:id>', views.aluno_id),
+    path('', views.home, name='home'),
+    path('aluno', views.aluno, name='aluno'),
+    path('aluno/<int:id>', views.aluno_id, name='aluno_id'),
 ] + static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT
