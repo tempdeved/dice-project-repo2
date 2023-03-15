@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib import admin
 import math
 
 # Create your models here.
@@ -75,8 +76,12 @@ class Aluno(models.Model):
     senha = models.CharField(max_length=100, blank=True, null=True, default='')
     foto = models.ImageField(upload_to='images', blank=True, null=True,)
 
-    def __str__(self):
-        return f'{self.id}: {self.nome} {self.last_name}'.upper()
+    @admin.display(description='Nome Completo')
+    def full_name(self):
+        return f'{self.nome} {self.sobrenome} {self.last_name}'
+
+    # def __str__(self):
+    #     return f'{self.full_name()}'.upper()
 
 
 class Funcionario(models.Model):
@@ -131,9 +136,14 @@ class Horario(models.Model):
     min_fim = models.CharField(max_length=2, blank=True, null=True, default='')
     duracao_min = models.CharField(max_length=2, blank=True, null=True, default='')
 
+    def hr_turma(self):
+        return f'{self.hora_inicio}:{self.min_inicio}-' \
+               f'{self.hora_fim}:{self.min_fim}'.upper()
+
     def __str__(self):
-        return f'{self.dia_semana}-{self.hora_inicio}:{self.min_inicio}/' \
-           f'{self.hora_fim}:{self.min_fim}'.upper()
+        return f'{self.dia_semana}'.upper()
+        # return f'{self.dia_semana} | {self.hora_inicio}:{self.min_inicio}-' \
+        #    f'{self.hora_fim}:{self.min_fim}'.upper()
 
 
 class Turma(models.Model):
@@ -144,8 +154,11 @@ class Turma(models.Model):
     professor = models.ForeignKey(Funcionario, null=True, on_delete=models.RESTRICT, related_name='professor') # FK professor
     coordenador = models.ForeignKey(Funcionario, null=True, on_delete=models.RESTRICT, related_name='coordenador') # FK coordenador
     aluno = models.ManyToManyField(Aluno, null=True, related_name='aluno') # FK coordenador
-
-    status = models.CharField(max_length=100, blank=True, null=True, default='')
+    status_choice = (
+        ('ativo','ativo'),
+        ('encerrada','encerrada'),
+    )
+    status = models.CharField(max_length=100, blank=True, null=True, default='', choices=status_choice)
     escola = models.CharField(max_length=100, blank=True, null=True, default='')
     nome = models.CharField(max_length=100, blank=True, null=True, default='')
     observacao = models.CharField(max_length=100, blank=True, null=True, default='')
@@ -156,9 +169,8 @@ class Turma(models.Model):
     map = models.CharField(max_length=100, blank=True, null=True, default='') #list ([op beginer I, op beginer II]  )
     idioma = models.CharField(max_length=100, blank=True, null=True, default='') #list ([op beginer I, op beginer II]  )
 
-
-    def __str__(self):
-        return f'{self.created_at.year}-{self.created_at.month}: {self.horario}'
+    # def __str__(self):
+    #     return f'{self.created_at.year}-{self.created_at.month}: {self.horario}'
 
 class HistoricoAluno(models.Model):
     id = models.AutoField(primary_key=True,)
@@ -209,7 +221,6 @@ class HistoricoAluno(models.Model):
             self.listening,
             self.readind_inter,
             self.writing_process,
-            self.frequencia
         ]
 
         result = sum(list_of_values) / len(list_of_values)

@@ -1,0 +1,29 @@
+
+{% extends 'base.html' %}
+{% block main %}
+
+<b> Turmas</b>
+
+<br>
+
+
+<ul >
+    {% for turma in turmas %}
+        <li> <a href="#">
+            {{ turma.horario }} {{ turma.horario.hr_turma }}
+        </a> </li>
+    {% endfor %}
+</ul>
+
+
+            {{ turma.aluno }}
+
+
+
+<button class="btn btn-info">
+    teste
+</button>
+
+{% include 'footer.html' with heello_f=hello  %}
+
+{% endblock %}

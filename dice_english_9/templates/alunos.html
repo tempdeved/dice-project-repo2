@@ -1,0 +1,37 @@
+
+{% extends 'base.html' %}
+{% block main %}
+
+<b> ALunos</b>
+
+<br>
+
+<!--<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">-->
+
+
+<ul>
+    {% for aluno in alunos %}
+        <li> <a href="#"> ola {{ aluno.nome }} </a> </li>
+    {% endfor %}
+</ul>
+
+    <form action="{% url 'aluno_novo' %}", method="POST">
+
+    <!--  csrf_token atack protect  -->
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button class="btn btn-info"
+            type="submit">
+        Cadastrar
+    </button>
+
+</form>
+
+
+
+
+{% include 'footer.html' with heello_f=hello  %}
+
+{% endblock %}
