@@ -7,7 +7,7 @@ from . import models
 class FuncionarioAdmin(admin.ModelAdmin):
     # fields = () #campos para cadastrar
     list_display = (
-        'nome',
+        'nome_completo',
         'funcao',
         'status',
         'telefone1',
@@ -27,6 +27,7 @@ class AlunoAdmin(admin.ModelAdmin):
         'full_name',
         'status',
         'dat_nasc',
+        'mes_nascimento',
         'bairro',
         'nome_mae',
         'nome_pai',
@@ -46,41 +47,53 @@ class AlunoAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.Horario)
-class HorarioAdmin(admin.ModelAdmin):
-    # fields = () #campos para cadastrar
-    list_display = (
-        'dia_semana',
-        'v_hora',
-    ) # grid de visualizações
-    # list_filter = ()
-    # search_fields = ()
-    # filter_horizontal = ('aluno',)
-    @admin.display(description='Hora')
-    def v_hora(self, obj):
-        return f'{obj.hora_inicio}:{obj.min_inicio}-' \
-           f'{obj.hora_fim}:{obj.min_fim}'
-    pass
+# @admin.register(models.Horario)
+# class HorarioAdmin(admin.ModelAdmin):
+#     # fields = () #campos para cadastrar
+#     list_display = (
+#         'dia_semana',
+#         'hr_turma',
+#     ) # grid de visualizações
+#     # list_filter = ()
+#     # search_fields = ()
+#     # filter_horizontal = ('aluno',)
+#     @admin.display(description='Hora')
+#     def v_hora(self, obj):
+#         return f'{obj.hora_inicio}:{obj.min_inicio}-' \
+#            f'{obj.hora_fim}:{obj.min_fim}'
+#     pass
 
 @admin.register(models.Turma)
 class TurmaAdmin(admin.ModelAdmin):
     # fields = () #campos para cadastrar
     list_display = (
         'v_created_at',
-        'horario',
+        'dia_semana',
+        'hr_turma',
         'status',
     ) # grid de visualizações
     list_filter = (
         'created_at',
-        'horario',
         'status',
     )
     # search_fields = ()
     filter_horizontal = ('aluno',)
 
-    @admin.display(description='Turma')
+    @admin.display(description='Ano')
     def v_created_at(self, obj):
-        return f'{obj.created_at.year}-{obj.created_at.month}'
+        return f'{obj.created_at.year}'
+
+    @admin.display(description='Dia Semana')
+    def dia_semana(self, obj):
+        return f'{obj.dia_semana}'
+
+    @admin.display(description='Hora')
+    def hr_turma(self, obj):
+        try:
+            return f'{self.hora_inicio}:{self.min_inicio} - ' \
+                   f'{self.hora_fim}:{self.min_fim}'.upper()
+        except:
+            return f'Não Cadastrado'
 
     pass
 
@@ -101,6 +114,7 @@ class HistoricoAlunoAdmin(admin.ModelAdmin):
         'readind_inter',
         'writing_process',
         'frequencia_pct',
+        'coment2',
         # 'media_final',
 
     ) # grid de visualizações

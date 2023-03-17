@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.contrib import admin
 import math
@@ -7,13 +9,14 @@ class Aluno(models.Model):
     id = models.AutoField(primary_key=True,)
     created_at = models.DateField(auto_now_add=True)
     nome = models.CharField(max_length=100, blank=True, null=True, default='')
-    sobrenome = models.CharField(max_length=100, blank=True, null=True, default='')
-    last_name = models.CharField(max_length=100, blank=True, null=True, default='')
+    nome_do_meio = models.CharField(max_length=100, blank=True, null=True, default='')
+    ultimo_nome = models.CharField(max_length=100, blank=True, null=True, default='')
     status_choice = (
         ('ativo','ativo'),
         ('encerrado','encerrado'),
         ('trancado','trancado'),
         ('jubilado','jubilado'),
+        ('cancelado','cancelado'),
     )
     status = models.CharField(max_length=100, blank=True, null=True, default='', choices=status_choice)
 
@@ -32,7 +35,7 @@ class Aluno(models.Model):
         ('11','11'),
         ('12','12'),
     )
-    mes_nascimento = models.IntegerField( blank=True, null=True, default='', choices=mes_nasc_choice )
+    # mes_nascimento = models.IntegerField( blank=True, null=True, default='', choices=mes_nasc_choice )
     cidade_nascimento = models.CharField(max_length=100, blank=True, null=True, default='')
     endereco = models.CharField(max_length=200, blank=True, null=True, default='')
     numero = models.IntegerField( blank=True, null=True, default='')
@@ -52,12 +55,13 @@ class Aluno(models.Model):
     )
     sexo = models.CharField(max_length=100, blank=True, null=True, default='', choices=sexo_choice)
     responsavel_financeiro = models.CharField(max_length=100, blank=True, null=True, default='')
+    tel_responsavel_financeiro = models.CharField(max_length=20, blank=True, null=True, default='')
     responsavel_p_filhos = models.CharField(max_length=100, blank=True, null=True, default='')
     bairro_de_ida = models.CharField(max_length=100, blank=True, null=True, default='')
     bairro_de_vola = models.CharField(max_length=100, blank=True, null=True, default='')
-    enviar_boleto = models.IntegerField( blank=True, null=True, default='')
-    gerar_taxa = models.IntegerField( blank=True, null=True, default='')
-    bolsista = models.IntegerField( blank=True, null=True, default='')
+    enviar_boleto = models.BooleanField( blank=True, null=True, default=False)
+    gerar_taxa = models.BooleanField( blank=True, null=True, default=False)
+    bolsista = models.BooleanField( blank=True, null=True, default=False)
 
     nome_pai = models.CharField(max_length=100, blank=True, null=True, default='')
     email_pai = models.EmailField(blank=True, null=True, default='')
@@ -78,18 +82,29 @@ class Aluno(models.Model):
 
     @admin.display(description='Nome Completo')
     def full_name(self):
-        return f'{self.nome} {self.sobrenome} {self.last_name}'
+        return f'{self.nome} {self.nome_do_meio} {self.ultimo_nome}'
 
-    # def __str__(self):
-    #     return f'{self.full_name()}'.upper()
+    @admin.display(description='Mês Nasc')
+    def mes_nascimento(self):
+        try:
+            return f'{self.dat_nasc.month}'
+        except:
+            return f'Não Cadastrado'
+
+    def __str__(self):
+        return f'{self.full_name()}'.upper()
 
 
 class Funcionario(models.Model):
     id = models.AutoField(primary_key=True,)
     created_at  = models.DateField(auto_now_add=True)
 
-    nome = models.CharField(max_length=100, blank=True, null=True, default='')
-    status = models.CharField(max_length=100, blank=True, null=True, default='')
+    nome_completo = models.CharField(max_length=100, blank=True, null=True, default='')
+    status_choices = (
+        ('contratado', 'contratado'),
+        ('contrato encerrado', 'contrato encerrado'),
+    )
+    status = models.CharField(max_length=100, blank=True, null=True, default='', choices=status_choices)
     funcao_choices = (
         ('gerente', 'gerente'),
         ('recepção', 'recepção'),
@@ -97,7 +112,6 @@ class Funcionario(models.Model):
     )
     funcao = models.CharField(max_length=30 , blank=True, null=True, default='', choices=funcao_choices)  # [1=gerente, 2=recep, 3=professor]
     senha = models.CharField(max_length=100, blank=True, null=True, default='')
-    # senha = models.CharField(max_length=100, blank=True, null=True, default='')
     telefone1 = models.CharField(max_length=20, blank=True, null=True, default='')
     telefone2 = models.CharField(max_length=20, blank=True, null=True, default='')
     dat_nasc = models.DateField( blank=True, null=True, default='')
@@ -115,11 +129,61 @@ class Funcionario(models.Model):
     foto = models.ImageField(upload_to='images', blank=True, null=True,)
 
     def __str__(self):
-        return f'{self.id}: {self.nome} - {self.funcao} - {self.status}'.upper()
+        return f'{self.id}: {self.nome_completo} - {self.funcao} - {self.status}'.upper()
 
 
-class Horario(models.Model):
+# class Horario(models.Model):
+#     id = models.AutoField(primary_key=True,)
+#     dia_semana_choice = (
+#         ('segunda-feira','segunda-feira'),
+#         ('terça-feira','terça-feira'),
+#         ('quarta-feira','quartada-feira'),
+#         ('quinta-feira','quintaa-feira'),
+#         ('sexta-feira','sextaa-feira'),
+#         ('sábado-feira','sábadoda-feira'),
+#         ('domingo-feira','domingoa-feira'),
+#     )
+#     dia_semana = models.CharField(max_length=30, blank=True, null=True, default='', choices=dia_semana_choice)
+#     hora_ini_choice = (
+#         (f'{x}', f'{x}')
+#         for x in range(0, 24)
+#     )
+#     hora_fim_choice = (
+#         (f'{x}', f'{x}')
+#         for x in range(0, 24)
+#     )
+#     min_ini_choice = (
+#         (f'{x}', f'{x}')
+#         for x in range(0, 60)
+#     )
+#     min_fim_choice = (
+#         (f'{x}', f'{x}')
+#         for x in range(0, 60)
+#     )
+#     hora_inicio = models.CharField(max_length=2, blank=True, null=True, default='', choices=hora_ini_choice)
+#     hora_fim = models.CharField(max_length=2, blank=True, null=True, default='', choices=hora_fim_choice)
+#     min_inicio = models.CharField(max_length=2, blank=True, null=True, default='', choices=min_ini_choice)
+#     min_fim = models.CharField(max_length=2, blank=True, null=True, default='', choices=min_fim_choice)
+#     duracao_min = models.CharField(max_length=2, blank=True, null=True, default='')
+#
+#     def hr_turma(self):
+#         return f'{self.hora_inicio}:{self.min_inicio} - ' \
+#                f'{self.hora_fim}:{self.min_fim}'.upper()
+#
+#     def __str__(self):
+#         return f'{self.dia_semana}'.upper()
+#         # return f'{self.dia_semana} | {self.hora_inicio}:{self.min_inicio}-' \
+#         #    f'{self.hora_fim}:{self.min_fim}'.upper()
+
+
+class Turma(models.Model):
     id = models.AutoField(primary_key=True,)
+    created_at = models.DateField(auto_now_add=True)
+
+    # horario = models.ForeignKey(Horario, null=True, on_delete=models.RESTRICT, related_name='horario') # FK horario
+    professor = models.ForeignKey(Funcionario, null=True, on_delete=models.RESTRICT, related_name='professor') # FK professor
+    coordenador = models.ForeignKey(Funcionario, null=True, on_delete=models.RESTRICT, related_name='coordenador') # FK coordenador
+
     dia_semana_choice = (
         ('segunda-feira','segunda-feira'),
         ('terça-feira','terça-feira'),
@@ -130,30 +194,31 @@ class Horario(models.Model):
         ('domingo-feira','domingoa-feira'),
     )
     dia_semana = models.CharField(max_length=30, blank=True, null=True, default='', choices=dia_semana_choice)
-    hora_inicio = models.CharField(max_length=2, blank=True, null=True, default='',)
-    min_inicio = models.CharField(max_length=2, blank=True, null=True, default='')
-    hora_fim = models.CharField(max_length=2, blank=True, null=True, default='')
-    min_fim = models.CharField(max_length=2, blank=True, null=True, default='')
+    hora_ini_choice = (
+        (f'{x}', f'{x}')
+        for x in range(0, 24)
+    )
+    hora_fim_choice = (
+        (f'{x}', f'{x}')
+        for x in range(0, 24)
+    )
+    min_ini_choice = (
+        (f'{x}', f'{x}')
+        for x in range(0, 60)
+    )
+    min_fim_choice = (
+        (f'{x}', f'{x}')
+        for x in range(0, 60)
+    )
+    hora_inicio = models.CharField(max_length=2, blank=True, null=True, default='', choices=hora_ini_choice)
+    min_inicio = models.CharField(max_length=2, blank=True, null=True, default='', choices=min_ini_choice)
+    hora_fim = models.CharField(max_length=2, blank=True, null=True, default='', choices=hora_fim_choice)
+    min_fim = models.CharField(max_length=2, blank=True, null=True, default='', choices=min_fim_choice)
     duracao_min = models.CharField(max_length=2, blank=True, null=True, default='')
 
-    def hr_turma(self):
-        return f'{self.hora_inicio}:{self.min_inicio}-' \
-               f'{self.hora_fim}:{self.min_fim}'.upper()
-
-    def __str__(self):
-        return f'{self.dia_semana}'.upper()
-        # return f'{self.dia_semana} | {self.hora_inicio}:{self.min_inicio}-' \
-        #    f'{self.hora_fim}:{self.min_fim}'.upper()
-
-
-class Turma(models.Model):
-    id = models.AutoField(primary_key=True,)
-    created_at = models.DateField(auto_now_add=True)
-
-    horario = models.ForeignKey(Horario, null=True, on_delete=models.RESTRICT, related_name='horario') # FK horario
-    professor = models.ForeignKey(Funcionario, null=True, on_delete=models.RESTRICT, related_name='professor') # FK professor
-    coordenador = models.ForeignKey(Funcionario, null=True, on_delete=models.RESTRICT, related_name='coordenador') # FK coordenador
     aluno = models.ManyToManyField(Aluno, null=True, related_name='aluno') # FK coordenador
+    semestre = models.CharField(max_length=100, blank=True, null=True, default='')
+    flag = models.CharField(max_length=100, blank=True, null=True, default='')
     status_choice = (
         ('ativo','ativo'),
         ('encerrada','encerrada'),

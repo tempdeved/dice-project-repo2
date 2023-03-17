@@ -11,7 +11,7 @@ from . import forms
 def home(request):
 
     result = {
-        'hello': 'ola mundo, home',
+        'hello': 'home',
         'div_teste': 'teste-div',
     }
 
